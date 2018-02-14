@@ -1,39 +1,43 @@
-import os
-
+from nilearn import image
 import nibabel as nib
-import numpy
-import scipy
-import dicom
-import matplotlib.pyplot as plt
+#from nilearn import datasets
+from nilearn import surface
+# from nilearn import plotting adding this comment makes it work?!?!
+
+import matplotlib.pyplot
 
 # Load File
-file_path = 'Data-I/LS4025 Rest4/unprocessed/3T/rfMRI_REST4_LR/LS4025_3T_rfMRI_REST4_LR.nii.gz'
+file_path = nib.load('Data-I/LS4025 WM/unprocessed/3T/tfMRI_WM_LR/LS4025_3T_tfMRI_WM_LR_SBRef_gdc.nii.gz')
+file_path_data = file_path.get_data()
 
-# Load Brain Scan
-epi_image = nib.load(file_path)
-mask_image = nib.load(file_path)
-# Create Mask
-epi_data = epi_image.get_data()
-mask_data = mask_image.get_data()
+print(file_path.shape)
+print(file_path.shape[2])
 
-# Retrieve File Name
-file_base_name = os.path.basename(file_path)
-file_name = os.path.splitext(file_base_name)[0]
 
-# Plot Brain Scan
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(17,7))
-# vmin and vmax change the contrast values
-ax1.imshow(1 + mask_data[:,:,50,90], interpolation='nearest', cmap='gray', vmin=-50, vmax=2000)
-ax2.imshow(1 - epi_data[:,:,50,419], interpolation='nearest', cmap='gray', vmax=2000)
+def average(number):
+    array=[]
+    for i in range (0, number+1):
+        array.append(i)
+        print(array[i])
 
-# Apply Mask to Image
-#mask_data = mask_data.astype(bool)
-#epi_data_masked = epi_data[mask_data]
+    return int(sum(array)/number)
 
-# ToDo - What does it mean by too many indices!?!?
-#ax3.imshow(1 - epi_data_masked[1,:], interpolation='nearest', cmap'gray', vmax=2000)
+print(average(file_path.shape[2]))
+#fsaverage = datasets.fetch_surf_fsaverage5()
 
-ax1.set_title('Mask Image')
-ax2.set_title('EPI Image')
-plt.show()
-print(mask_data.shape)
+from nilearn import plotting
+
+smoothed_image = image.smooth_img(file_path, fwhm=5)
+#texture = surface.vol_to_surf(file_path, fsaverage.pial_right)
+
+#3D doesn't work yet
+#plotting.plot_surf_stat_map(fsaverage.infl_right, texture, hemi='right',
+#                            title='Surface right hemisphere',
+#                            threshold=1., bg_map=fsaverage.sulc_right,
+#                            cmap='cold_hot')
+#plotting.plot_stat_map(file_path, display_mode='x', threshold=20., cut_coords=range(0, 100, 5), title='Slices')
+#plotting.plot_stat_map(file_path, threshold=3)
+plotting.plot_epi(smoothed_image, title="Senior Design", resampling_interpolation='continuous', bg_img=None)
+#plotting.plot_img(smoothed_image)
+#plotting.plot_glass_brain(file_path)
+plotting.show()
