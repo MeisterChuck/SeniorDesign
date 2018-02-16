@@ -2,6 +2,7 @@ import glob
 import nibabel as nib
 
 def navigateFiles(directory):
+    # Used to determine if all .gz files are being found, will remove index later
     index = 0
 
     # For speed only navigate files that have these attributes
