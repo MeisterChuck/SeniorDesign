@@ -1,7 +1,7 @@
 from Functions import *
 
-navigate("Emotion")
-navigate("Gambling")
-navigate("Rest")
-navigate("Structural")
-navigate("WM")
+getfilepath("Emotion")
+getfilepath("Gambling")
+getfilepath("Rest")
+getfilepath("Structural")
+getfilepath("WM")
