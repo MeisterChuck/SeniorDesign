@@ -1,15 +1,14 @@
 import glob
-import ntpath
-import os
 import nibabel as nib
 
-# TODO adjust file_path to include previous directory, some directories contain files of the same name
-# Used ntpath for program to navigate directories on all platforms
-# Used os to get filename
+
 def getfilename(file_path):
-    file_path_name = ntpath.basename(file_path)
-    file_path_name_split = os.path.splitext(file_path_name)[0]
-    file_name = file_path_name_split[:-7]
+    file = file_path.split('/')
+
+    # Used '_' instead of '/' to not have to create an unnecessary directory, just need all files to be unique.
+    new_file = file[len(file)-2] + "_" + file[len(file)-1]
+    file_name = new_file[:-7]
+
     return file_name
 
 
@@ -33,7 +32,7 @@ def getaverage(file_path, category):
 
         nib.save(nib.Nifti2Image(new_image, image.affine, image.header), new_file_path)
     else:
-        print("Skip Average")
+        print("\nSkip Average\n")
 
         nib.save(nib.Nifti2Image(image_data, image.affine, image.header), new_file_path)
 
