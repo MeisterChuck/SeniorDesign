@@ -5,6 +5,9 @@ from GetData.GetData import GetData
 import glob
 
 class TestGetData(TestCase):
+    def test_run(self):
+        self.assertIsNone(GetData.run(self))
+
     def test_getfilepath(self):
         GetData.category = "Emotion"
         print(GetData.getfilepath(GetData.category))
