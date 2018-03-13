@@ -11,14 +11,14 @@ class GetData:
 
     def run(self):
         print("It runs\n")
-        # for state in range(0, len(GetData.category)):
-        #     # Gets averaged data
-        #     GetData.getfilepath(GetData.category[state])
-        #
-        #     # Gets averaged images from averaged data
-        #     GetData.getaveragedfilepath(GetData.category[state])
+        for state in range(0, len(GetData.category)):
+            # Gets averaged data
+            GetData.getfilepath(GetData.category[state])
 
-    def getfilename(self, file_path):
+            # Gets averaged images from averaged data
+            GetData.getaveragedfilepath(GetData.category[state])
+
+    def getfilename(file_path):
         file = file_path.split('/')
 
         # Used '_' instead of '/' to not have to create an unnecessary directory, just need all files to be unique.
@@ -27,18 +27,19 @@ class GetData:
 
         return file_name
 
-    def getaverage(self, file_path, category):
+    def getaverage(file_path, category):
         image = nib.load(file_path)
         image_data = image.get_data()
 
         # Change hdr size from 348 to 540 to convert from NIfTI1 to NIfTI2
         image.header['sizeof_hdr'] = 540
 
+        new_image = 0
+
         new_file_path = 'Averaged Data/' + category + "/" + GetData.getfilename(file_path) + '.nii.gz'
 
         if image_data.ndim == 4:
             print("Calculate Average")
-            new_image = 0
 
             for x in range(0, image_data.shape[3]):
                 new_image = new_image + image_data[:, :, :, x]
@@ -49,21 +50,31 @@ class GetData:
         else:
             print("\nSkip Average\n")
 
+            new_image = image_data
+
             nib.save(nib.Nifti2Image(image_data, image.affine, image.header), new_file_path)
 
-    def getfilepath(self):
+        return new_image
+
+    def getfilepath(state):
         index = 0
 
-        for file_path in glob.glob('Data-I/*' + GetData.category + '*/unprocessed/3T/*/*?.gz'):
+        for file_path in glob.glob('Data-I/*' + state + '*/unprocessed/3T/*/*?.gz'):
+            print("In {0} - {1}".format(state, GetData.getfilename(file_path)))
+            GetData.getaverage(file_path, state)
             index = index + 1
-            print("In {0} - {1}".format(GetData.category, GetData.getfilename(file_path)))
-            GetData.getaverage(file_path, GetData.category)
+
+        return True
+
 
     def getaveragedimages(file_path, category):
         image = nib.load(file_path)
         image_data = image.get_data()
 
-        index = 0
+        index_front = 0
+        index_top = 0
+        index_side = 0
+
         for x in range(0, image_data.shape[0]):
             new_image_location = "Averaged Data Images/" + category + "/" + GetData.getfilename(file_path) + "_sideview" + str(
                 x) + ".png"
@@ -72,11 +83,10 @@ class GetData:
 
             plt.imsave(new_image_location, image_data[x, :, :], cmap='bone')
 
-            index = index + 1
+            index_side = index_side + 1
 
-        print(f"\nThere are {index} side images\n")
+        print(f"\nThere are {index_side} side images\n")
 
-        index = 0
         for y in range(0, image_data.shape[1]):
             new_image_location = "Averaged Data Images/" + category + "/" + GetData.getfilename(file_path) + "_frontview" + str(
                 y) + ".png"
@@ -85,11 +95,10 @@ class GetData:
 
             plt.imsave(new_image_location, image_data[:, y, :], cmap='bone')
 
-            index = index + 1
+            index_front = index_front + 1
 
-        print(f"\nThere are {index} front images\n")
+        print(f"\nThere are {index_front} front images\n")
 
-        index = 0
         for z in range(0, image_data.shape[2]):
             new_image_location = "Averaged Data Images/" + category + "/" + GetData.getfilename(file_path) + "_topview" + str(
                 z) + ".png"
@@ -98,6 +107,24 @@ class GetData:
 
             plt.imsave(new_image_location, image_data[:, :, z], cmap='bone')
 
+            index_top = index_top + 1
+
+        print(f"\nThere are {index_top} top images\n")
+
+        index_whole = index_front + index_side + index_top
+
+        print(f"\nThere are {index_whole} images\n")
+
+        return index_whole
+
+    def getaveragedfilepath(category):
+        index = 0
+
+        for file_path in glob.glob('Averaged Data/' + category + '/*.gz'):
+            GetData.getaveragedimages(file_path, category)
+
             index = index + 1
 
-        print(f"\nThere are {index} top images\n")
+        print(f"There are {index} files\n")
+
+        return index
