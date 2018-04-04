@@ -2,7 +2,6 @@ from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import Conv2D, Activation, MaxPooling2D, Flatten, Dense, Dropout
 from keras.preprocessing import image
-
 # Collect Data
 # Dimensions of images
 img_width, img_height = 110, 110
@@ -55,6 +54,8 @@ model.add(Dense(1))
 model.add(Activation('sigmoid'))
 print("Dropout Layer Done")
 
+# model.summary()
+
 # Compile Layer
 model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 print("Compile Layer Done")
@@ -65,11 +66,14 @@ nb_train_samples = 2048
 nb_validation_samples = 832
 
 # Train Model
-model.fit_generator(train_generator, steps_per_epoch=nb_train_samples, epochs=nb_epoch, validation_data=validation_generator, validation_steps=nb_validation_samples)
+model.fit_generator(train_generator, steps_per_epoch=nb_train_samples, epochs=nb_epoch,
+                    validation_data=validation_generator, validation_steps=nb_validation_samples)
 model.save_weights('models/simple_CNN.h5')
 print("Train Model Done")
 
-#Test Model
-img = image.load_img('Averaged Data Images/Emotion/Emotion_tfMRI_EMOTION_LR_LS4025_3T_SpinEchoFieldMap_LR_frontview23.png', target_size=(224,224))
+# Test Model
+img = image.load_img(
+    'Averaged Data Images/Emotion/Emotion_tfMRI_EMOTION_LR_LS4025_3T_SpinEchoFieldMap_LR_frontview23.png',
+    target_size=(224, 224))
 prediction = model.predict(img)
 print(prediction)

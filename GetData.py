@@ -36,7 +36,7 @@ class GetData:
 
         new_image = 0
 
-        new_file_path = 'Averaged Data/' + category + "/" + GetData.getfilename(file_path) + '.nii.gz'
+        new_file_path = 'Averaged NIfTI/' + category + "/" + GetData.getfilename(file_path) + '.nii.gz'
 
         if image_data.ndim == 4:
             print("Calculate Average")
@@ -76,7 +76,7 @@ class GetData:
         index_side = 0
 
         for x in range(0, image_data.shape[0]):
-            new_image_location = "Averaged Data Images/" + category + "/" + GetData.getfilename(file_path) + "_sideview" + str(
+            new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(file_path) + "_sideview" + str(
                 x) + ".png"
 
             print(new_image_location + " created")
@@ -88,7 +88,7 @@ class GetData:
         print(f"\nThere are {index_side} side images\n")
 
         for y in range(0, image_data.shape[1]):
-            new_image_location = "Averaged Data Images/" + category + "/" + GetData.getfilename(file_path) + "_frontview" + str(
+            new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(file_path) + "_frontview" + str(
                 y) + ".png"
 
             print(new_image_location + " created")
@@ -100,7 +100,7 @@ class GetData:
         print(f"\nThere are {index_front} front images\n")
 
         for z in range(0, image_data.shape[2]):
-            new_image_location = "Averaged Data Images/" + category + "/" + GetData.getfilename(file_path) + "_topview" + str(
+            new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(file_path) + "_topview" + str(
                 z) + ".png"
 
             print(new_image_location + " created")
@@ -120,7 +120,7 @@ class GetData:
     def getaveragedfilepath(category):
         index = 0
 
-        for file_path in glob.glob('Averaged Data/' + category + '/*.gz'):
+        for file_path in glob.glob('Averaged NIfTI/' + category + '/*.gz'):
             GetData.getaveragedimages(file_path, category)
 
             index = index + 1
