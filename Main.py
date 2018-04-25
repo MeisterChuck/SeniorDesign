@@ -1,5 +1,4 @@
-from GetData.GetData import GetData
-import ImageClassifier
+from GetData import GetData
 
 
 def main():

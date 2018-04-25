@@ -13,7 +13,7 @@ class GetData:
         print("It runs\n")
         for state in range(0, len(GetData.category)):
             # Gets averaged data
-            GetData.getfilepath(GetData.category[state])
+            # GetData.getfilepath(GetData.category[state])
 
             # Gets averaged images from averaged data
             GetData.getaveragedfilepath(GetData.category[state])
@@ -44,7 +44,9 @@ class GetData:
             for x in range(0, image_data.shape[3]):
                 new_image = new_image + image_data[:, :, :, x]
 
+            print(image_data.shape)
             new_image = new_image / image_data.shape[3]
+            print(new_image.shape)
 
             nib.save(nib.Nifti2Image(new_image, image.affine, image.header), new_file_path)
         else:
@@ -71,54 +73,69 @@ class GetData:
         image = nib.load(file_path)
         image_data = image.get_data()
 
-        index_front = 0
+        # index_front = 0
         index_top = 0
-        index_side = 0
+        # index_side = 0
 
-        for x in range(0, image_data.shape[0]):
-            new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(file_path) + "_sideview" + str(
-                x) + ".png"
-
-            print(new_image_location + " created")
-
-            plt.imsave(new_image_location, image_data[x, :, :], cmap='bone')
-
-            index_side = index_side + 1
-
-        print(f"\nThere are {index_side} side images\n")
-
-        for y in range(0, image_data.shape[1]):
-            new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(file_path) + "_frontview" + str(
-                y) + ".png"
-
-            print(new_image_location + " created")
-
-            plt.imsave(new_image_location, image_data[:, y, :], cmap='bone')
-
-            index_front = index_front + 1
-
-        print(f"\nThere are {index_front} front images\n")
+        # for x in range(0, image_data.shape[0]):
+        #     new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(file_path) + "_sideview" + str(
+        #         x) + ".png"
+        #
+        #     print(new_image_location + " created")
+        #
+        #     plt.imsave(new_image_location, image_data[x, :, :], cmap='bone')
+        #
+        #     index_side = index_side + 1
+        #
+        # print(f"\nThere are {index_side} side images\n")
+        #
+        # for y in range(0, image_data.shape[1]):
+        #     new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(file_path) + "_frontview" + str(
+        #         y) + ".png"
+        #
+        #     print(new_image_location + " created")
+        #
+        #     plt.imsave(new_image_location, image_data[:, y, :], cmap='bone')
+        #
+        #     index_front = index_front + 1
+        #
+        # print(f"\nThere are {index_front} front images\n")
 
         for z in range(0, image_data.shape[2]):
-            new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(file_path) + "_topview" + str(
+
+            print(image_data.shape)
+
+            if(category == "Structural" and z == 63):
+                new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(
+                    file_path) + "_topview" + str(
+                    z) + ".png"
+
+                print(new_image_location + " created")
+
+                plt.imsave(new_image_location, image_data[:, :, z], cmap='bone')
+            elif(z == 60 and category != "Structural"):
+                new_image_location = "Averaged Images/train/" + category + "/" + category + "." + GetData.getfilename(file_path) + "_topview" + str(
                 z) + ".png"
 
-            print(new_image_location + " created")
+                print(new_image_location + " created")
 
-            plt.imsave(new_image_location, image_data[:, :, z], cmap='bone')
+                plt.imsave(new_image_location, image_data[:,:, z], cmap = 'bone')
 
             index_top = index_top + 1
 
         print(f"\nThere are {index_top} top images\n")
 
-        index_whole = index_front + index_side + index_top
-
-        print(f"\nThere are {index_whole} images\n")
-
-        return index_whole
-
     def getaveragedfilepath(category):
         index = 0
+        averagedImagePath = nib.load("Averaged NIfTI/Emotion/tfMRI_EMOTION_LR_LS4025_3T_SpinEchoFieldMap_LR.nii.gz")
+        imagePath = nib.load("Data-I/LS4025 Emotion/unprocessed/3T/tfMRI_EMOTION_LR/LS4025_3T_SpinEchoFieldMap_LR.nii.gz")
+
+        averageImage = averagedImagePath.get_data()
+        image = imagePath.get_data()
+
+        print(averageImage.shape)
+        print(image.shape)
+
 
         for file_path in glob.glob('Averaged NIfTI/' + category + '/*.gz'):
             GetData.getaveragedimages(file_path, category)
